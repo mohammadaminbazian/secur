@@ -35,7 +35,6 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .usernameParameter("email")
                         .permitAll())
-
          .httpBasic(withDefaults());
              /*.logout(
                 lout ->lout.logoutUrl("/login?logout") )*/
@@ -62,10 +61,4 @@ public class SecurityConfig {
     }
 
 
-  /*  public AuthenticationManagerBuilder configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("amin")
-                .password("123")
-                .roles("USER");
-        return auth;
-    }*/
 }
