@@ -1,13 +1,13 @@
 package ir.bma.security.users.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import ir.bma.security.enums.UserRoles;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
@@ -19,4 +19,12 @@ public class Users implements Serializable {
 
     private String email;
     private String password;
+    private Boolean enabled = true;
+
+    @ElementCollection(targetClass = UserRoles.class,fetch = FetchType.EAGER) // Moadel Table
+    @CollectionTable( name = "authorities",
+            joinColumns = @JoinColumn(name = "email",referencedColumnName = "email")
+    )
+    @Enumerated(EnumType.STRING) // bargardandan meghdar string
+    private List<UserRoles> userRoles;
 }
