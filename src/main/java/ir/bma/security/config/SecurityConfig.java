@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 import javax.sql.DataSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -24,7 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-        .csrf(cs -> cs.disable())
+        .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(
                         authorize -> authorize
                                 .requestMatchers("/")
@@ -43,7 +44,7 @@ public class SecurityConfig {
 
 
    @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource,PasswordEncoder passwordEncoder){
+    public UserDetailsService userDetailsService(DataSource dataSource, PasswordEncoder passwordEncoder){
 
         JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
         userDetailsManager.setUsersByUsernameQuery("select  email, password, enabled from users where  email=?");
