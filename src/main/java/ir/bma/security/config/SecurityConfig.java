@@ -1,7 +1,12 @@
 package ir.bma.security.config;
 
+import ir.bma.security.users.service.UsersService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,7 +24,11 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
+    private final UsersService usersService;
+    @Autowired
+    public SecurityConfig(UsersService usersService) {
+        this.usersService = usersService;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -43,13 +52,17 @@ public class SecurityConfig {
     }
 
 
-   @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource, PasswordEncoder passwordEncoder){
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(usersService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
 
-        JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-        userDetailsManager.setUsersByUsernameQuery("select  email, password, enabled from users where  email=?");
-        userDetailsManager.setAuthoritiesByUsernameQuery("select  email,user_roles from authorities  where  email=?");
-        return userDetailsManager;
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean
